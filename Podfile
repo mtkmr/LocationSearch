@@ -6,6 +6,6 @@ target 'LocationSearch' do
 
   # Pods for LocationSearch
   pod 'FloatingPanel'
-
+  pod 'IQKeyboardManager'
 
 end

@@ -10,7 +10,13 @@ import MapKit
 import FloatingPanel
 import CoreLocation
 
+protocol MainViewControllerDelegate: AnyObject {
+    func mainViewController(_ vc: MainViewController, location: CLLocation)
+}
+
 final class MainViewController: UIViewController {
+    
+    weak var delegate: MainViewControllerDelegate?
     
     private lazy var mapView: MKMapView = {
        let mapView = MKMapView()
@@ -27,15 +33,17 @@ final class MainViewController: UIViewController {
         
         let searchVC = SearchViewController()
         searchVC.delegate = self
+        self.delegate = searchVC
         
         panelController.set(contentViewController: searchVC)
         panelController.addPanel(toParent: self)
         
         LocationManager.shared.getUserLocation { [weak self] (location) in
+            guard let strongSelf = self else { return }
             DispatchQueue.main.async {
-                guard let strongSelf = self else { return }
                 strongSelf.addMapPin(with: location)
             }
+            self?.delegate?.mainViewController(strongSelf, location: location)
         }
     }
     

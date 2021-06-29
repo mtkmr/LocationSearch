@@ -1,16 +1,20 @@
 PODS:
   - FloatingPanel (2.4.0)
+  - IQKeyboardManager (6.5.6)
 
 DEPENDENCIES:
   - FloatingPanel
+  - IQKeyboardManager
 
 SPEC REPOS:
   trunk:
     - FloatingPanel
+    - IQKeyboardManager
 
 SPEC CHECKSUMS:
   FloatingPanel: fa60183672ed86313b9e241e34465e82211260e8
+  IQKeyboardManager: 2a6e97afdafc7becf0cb17a9a8d795e3a980717f
 
-PODFILE CHECKSUM: d77f9864a89c3ce3efb410b2d72b7e5ad6b5a536
+PODFILE CHECKSUM: a5aa79c1352329c051646428232a2b92b583096e
 
 COCOAPODS: 1.10.0

@@ -104,6 +104,20 @@ extension SearchViewController: UITableViewDataSource {
         cell.textLabel?.numberOfLines = 0
         return cell
     }
-    
-    
+}
+
+extension SearchViewController: MainViewControllerDelegate {
+    func mainViewController(_ vc: MainViewController, location: CLLocation) {
+        LocationManager.shared.resolveLocationName(with: location) { [weak self] (locationName) in
+            guard let locationName = locationName else { return }
+            DispatchQueue.main.async {
+                self?.locations.append(Location(
+                    title: locationName,
+                    coodinate: location.coordinate
+                    )
+                )
+                self?.tableView.reloadData()
+            }
+        }
+    }
 }
