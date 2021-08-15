@@ -13,18 +13,22 @@ struct Location {
     let coodinate: CLLocationCoordinate2D?
 }
 
-final class LocationManager: NSObject {
-    static let shared = LocationManager()
+final class LocationService: NSObject {
+    static let shared = LocationService()
     
-    let manager = CLLocationManager()
+    private let manager = CLLocationManager()
     
-    var completion: ((CLLocation) -> Void)?
+    private var completion: ((CLLocation) -> Void)?
+    
+    func startUpdateLocation() {
+        manager.startUpdatingLocation()
+    }
     
     func getUserLocation(completion: ((CLLocation) -> Void)?) {
-        self.completion = completion
-        manager.requestWhenInUseAuthorization()
         manager.delegate = self
+        manager.requestWhenInUseAuthorization()
         manager.startUpdatingLocation()
+        self.completion = completion
     }
     
     ///クエリからジオコーディングしてクロージャ([Location]) -> Voidを返す
@@ -92,10 +96,39 @@ final class LocationManager: NSObject {
     }
 }
 
-extension LocationManager: CLLocationManagerDelegate {
+//MARK: - CLLocationManagerDelegate
+extension LocationService: CLLocationManagerDelegate {
+    
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.first else { return }
         completion?(location)
         manager.stopUpdatingLocation()
+    }
+    
+    @available(iOS 14.0, *)
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        guard
+            CLLocationManager.locationServicesEnabled()
+        else {
+            print("「設定」→「プライバシー」→「位置情報サービス」より位置情報の取得を許可してください")
+            return
+        }
+        
+        switch manager.authorizationStatus {
+        case .denied:
+            print("「設定」アプリから位置情報の取得を許可してください")
+        case .restricted:
+            print("何らかの制限がかかっています")
+        case .notDetermined:
+            manager.requestWhenInUseAuthorization()
+        case .authorizedAlways, .authorizedWhenInUse:
+            manager.startUpdatingLocation()
+        @unknown default:
+            fatalError("予期せぬ位置情報認証エラーが発生しました")
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+        print(error.localizedDescription)
     }
 }
