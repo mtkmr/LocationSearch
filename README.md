@@ -9,12 +9,14 @@
  
 - CLLocationManagerを利用した位置情報の取得
 - 指定した地名に移動してピン (画像)を表示する
+- 吹き出しの描画
  
 # Requirement
-- KeyboardManagerSwift
+
+- [KeyboardManagerSwift](https://cocoapods.org/pods/IQKeyboardManagerSwift)
  
 # Installation
- 
+ Using Cocoa Pods
 ```Podfile
 pod 'KeyboardManagerSwift'
 ```
