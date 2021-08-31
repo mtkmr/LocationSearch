@@ -1,5 +1,6 @@
 # LocationSearchApp
-上司の厳しい命令にも忠実な、全国を飛び回る社員を描いたアプリ
+
+A simple application that navigates to a specified location on a map.
  
 # DEMO
  
