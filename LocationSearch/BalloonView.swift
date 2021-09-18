@@ -18,7 +18,7 @@ final class BalloonView: UIView {
         //グラフィックコンテキストの作成
         let context = UIGraphicsGetCurrentContext()
         //描画の設定
-        context?.setFillColor(UIColor.black.cgColor)
+        context?.setFillColor(cyan: 1, magenta: 1, yellow: 1, black: 1, alpha: 0.8)
         //パスを作成して描画
         contextBalloonPath(context: context!, rect: rect)
     }
