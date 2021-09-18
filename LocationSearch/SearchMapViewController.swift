@@ -13,7 +13,6 @@ import CoreLocation
 final class SearchMapViewController: UIViewController {
     
     //MARK: - Properties
-    private var locations: [Location] = []
     
     private lazy var mapView: MKMapView = {
        let mapView = MKMapView()
@@ -43,7 +42,7 @@ final class SearchMapViewController: UIViewController {
                          .font: UIFont.systemFont(ofSize: 16,
                                                   weight: .regular)]
         )
-        textField.backgroundColor = .black
+        textField.backgroundColor = .clear
         textField.textColor = .white
         textField.tintColor = .white
         textField.clearButtonMode = .always
@@ -74,7 +73,7 @@ final class SearchMapViewController: UIViewController {
         LocationService.shared.getUserLocation { [weak self] (location) in
             guard let strongSelf = self else { return }
             DispatchQueue.main.async {
-                strongSelf.addMapPin(with: location)
+                strongSelf.updateMap(with: location)
             }
         }
     }
@@ -117,8 +116,9 @@ private extension SearchMapViewController {
     }
     
     ///mapのpinを更新する
-    func addMapPin(with location: CLLocation) {
+    func updateMap(with location: CLLocation) {
         DispatchQueue.main.async { [weak self] in
+            //pin
             self?.mapView.removeAnnotations(self!.mapView.annotations)
             let pin = MKPointAnnotation()
             self?.mapView.setRegion(
@@ -130,7 +130,8 @@ private extension SearchMapViewController {
             )
             pin.coordinate = location.coordinate
             self?.mapView.addAnnotation(pin)
-            
+
+            //title
             LocationService.shared.resolveLocationName(with: location) { (locationName) in
                 self?.title = locationName
             }
@@ -151,11 +152,10 @@ extension SearchMapViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         if let text = textField.text, !text.isEmpty {
             LocationService.shared.findLocation(with: text) { [weak self] (locations) in
-                self?.locations = locations
                 guard
                     let coordinate = locations.first?.coodinate
                 else { return }
-                self?.addMapPin(with: CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude))
+                self?.updateMap(with: CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude))
                 LocationService.shared.resolveLocationName(with: CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)) { [weak self] (locationName) in
                     self?.title = locationName
                 }
@@ -196,6 +196,7 @@ extension SearchMapViewController: MKMapViewDelegate {
         }
 
         annotationView?.image = UIImage(named: "human")
+        annotationView?.contentMode = .scaleAspectFill
 
         return annotationView
     }
